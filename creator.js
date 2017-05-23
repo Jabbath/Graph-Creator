@@ -183,8 +183,8 @@ function canvasClick(e){
     e: The event object for the onclick event
     */
 
-    var xPos = e.clientX,
-        yPos = e.clientY;
+    var xPos = e.pageX,
+        yPos = e.pageY;
     
     //We want to check which input mode we are in
     switch(mode){

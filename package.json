@@ -1,6 +1,6 @@
 {
     "name": "Graph Creator",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "main": "index.html",
     "window": {
         "height": 1024,
