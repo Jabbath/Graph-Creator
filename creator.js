@@ -78,7 +78,7 @@ function removeNode(xPos, yPos){
     //Check each node and check to see the radius at which the click is from it
     for(i = 0; i<nodes.length; i++){
         //Apply pythagorean theorem
-        var radius = Math.sqrt(Math.pow(xPos - nodes[i].xPos, 2),
+        var radius = Math.sqrt(Math.pow(xPos - nodes[i].xPos, 2) + 
         Math.pow(yPos - nodes[i].yPos, 2));
 
         //If the radius is less than the maximum radius of the circle then
@@ -86,7 +86,7 @@ function removeNode(xPos, yPos){
         if(radius <= MAX_RADIUS){
             
             //Remove the entry from the node array and clear it's circle
-            ctx.clearRect(nodes[i].xPos, nodes[i].yPos, 10, 10);
+            ctx.clearRect(nodes[i].xPos, nodes[i].yPos, 20, 20);
             nodes.splice(i, 1);
             reDrawCanvas();
             return;
