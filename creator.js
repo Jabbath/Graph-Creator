@@ -1,4 +1,37 @@
 //*******************************************************************
+//UTILITY
+//*******************************************************************
+function arrayEqual(array1, array2){
+    /*
+    Checks if array1 is the same array as array 2.
+
+    INPUTS
+    array1: The first array
+    array2: The second array
+
+    OUTPUT
+    equal: Boolean value on whether the arrays are equal
+    */
+    
+    var equal = true;
+
+    //If the dimensions of the array are mismatched they aren't equal
+    if(array1.length !== array2.length){
+        equal = false;
+        return equal;
+    }
+
+    for(var i = 0; i < array1.length; i++){
+        if(array1[i] !== array2[i]){
+            equal = false;
+            return equal;
+        }
+    }
+
+    return equal;
+}
+
+//*******************************************************************
 //NODE MANIPULATION
 //*******************************************************************
 var nodes = [];
@@ -18,8 +51,8 @@ This is a node object. It store the position and edges of a node.
         const MAX_RADIUS = 10;
         
         //Calculate the radius of the click from the circle's center
-        var radius = Math.sqrt(Math.pow(xPos - nodes[i].xPos, 2) + 
-        Math.pow(yPos - nodes[i].yPos, 2));
+        var radius = Math.sqrt(Math.pow(xPos - this.xPos, 2) + 
+        Math.pow(yPos - this.yPos, 2));
 
         if(radius <= MAX_RADIUS){
             return true;
@@ -64,8 +97,8 @@ function drawEdge(node1, node2){
 
     ctx.beginPath();
 
-    //Make edges blue and thick
-    ctx.strokeStyle = '#0000ff';
+    //Make edges blue, 3 thick, and 0.45 transparent
+    ctx.strokeStyle = 'rgba(0, 0, 255, 0.45)';
     ctx.lineWidth = 3;
 
     ctx.moveTo(node1.xPos, node1.yPos);
@@ -83,9 +116,31 @@ function reDrawCanvas(){
     */
 
     ctx.drawImage(map, 0, 0);
+    
+    //Keep a record of each edge we draw so that we don't draw twice
+    var drawnEdges = [];
 
-    for(i = 0; i < nodes.length; i++){
+    //Draw each node and it's edges
+    for(var i = 0; i < nodes.length; i++){
         drawNode(nodes[i].xPos, nodes[i].yPos);
+        
+        for(var j = 0; j < nodes[i].adjacencies.length; j++){
+            var indexNode2 = nodes[i].adjacencies[j].index;
+            var edgeDrawn = false;
+
+            //Go through our drawn edges array and see if this edge has been drawn
+            for(var k = 0; k < drawnEdges.length; k++){
+                if(arrayEqual(drawnEdges[k], [i, indexNode2]) || arrayEqual(drawnEdges[k],  [indexNode2, i])){
+                    edgeDrawn = true;
+                    break;
+                }
+            }
+
+            if(!edgeDrawn){
+                drawEdge(nodes[i], nodes[indexNode2]);
+                drawnEdges.push([i,indexNode2]);
+            }
+        }
     }
 }
 
@@ -102,7 +157,7 @@ function addEdge(xPos, yPos){
     */
 
     //Find which node the user has selected with his click and redraw it
-    for(i = nodes.length - 1; i >= 0; i--){
+    for(var i = nodes.length - 1; i >= 0; i--){
         if(nodes[i].inNode(xPos, yPos)){
 
             //Add a new selected node and draw it on the screen in green
@@ -145,6 +200,39 @@ function addNode(xPos, yPos){
 
 }
 
+function updateAdjacencies(removedIndex){
+    /*
+    Updates the adjacencies of each node to counteract the removal of a node.
+
+    INPUT
+    removedIndex: The index of the node we are about to remove.
+    */
+
+    //Remove all adjacencies with the node about to be removed
+    for(var i = 0; i < nodes.length; i++){
+        var count = 0;
+
+        while(count < nodes[i].adjacencies.length){
+            //Check if the removed node is adjacent and remove it if it is
+            if(nodes[i].adjacencies[count].index === removedIndex){
+                nodes[i].adjacencies.splice(count, 1);
+                continue;
+            }
+
+            count++;
+        }
+    }
+
+    //Check all other adjacencies and decrement them if they are past the removed index
+    for(var i = 0; i < nodes.length; i++){
+        for(var j = 0; j < nodes[i].adjacencies.length; j++){
+            if(nodes[i].adjacencies[j].index > removedIndex){
+                nodes[i].adjacencies[j].index--;
+            }
+        }
+    }
+}
+
 function removeNode(xPos, yPos){
     /*
     Given an (xPos, yPos) coordinate, removes the first corresponding to the
@@ -156,13 +244,14 @@ function removeNode(xPos, yPos){
     */
 
     //Check each node and check to see the radius at which the click is from it
-    for(i = nodes.length - 1; i>=0; i--){
+    for(var i = nodes.length - 1; i>=0; i--){
         //If the radius is less than the maximum radius of the circle then
         //our click is in the node
         if(nodes[i].inNode(xPos, yPos)){
             
             //Remove the entry from the node array and clear it's circle
-            ctx.clearRect(nodes[i].xPos, nodes[i].yPos, 20, 20);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            updateAdjacencies(i);
             nodes.splice(i, 1);
             reDrawCanvas();
             return;
