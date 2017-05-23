@@ -26,7 +26,7 @@ function drawNode(xPos, yPos){
     ctx.stroke();
 }
 
-function addNode(e){
+function canvasClick(e){
     /*
     Records the position of each mouseclick and adds a node there.
     
@@ -35,7 +35,17 @@ function addNode(e){
     */
 
     var xPos = e.clientX,
-        yPos = e.clientY;    
+        yPos = e.clientY;
+    
+    //We want to check which input mode we are in
+    switch(mode){
+        case 'nodes':
+            addNodes(xPos, yPos);
+            break;
+        
+        default:
+            throw new Error('Invalid input mode!');
+    }
     
     //When the user clicks on the graph, add a node
     nodes.push(new node(xPos, yPos));
@@ -44,7 +54,7 @@ function addNode(e){
     drawNode(xPos, yPos);
 }
 
-
+//*****************************************************************
 //INITIALIZATION
 //Get our canvas and draw the map to it
 var canvas  = document.getElementById('cytoBkg');
@@ -60,5 +70,29 @@ map.onload = function() {
     ctx.drawImage(map, 0, 0);
 }
 
+//Set which input mode we will start with
+var mode = 'nodes';
 
-canvas.addEventListener('click', addNode, false);
+function setMode(modeType){
+    /*
+    Sets the current input mode, and updates the status indicator.
+
+    INPUT
+    modeType: A string with the new mode
+    */
+
+    mode = modeType;
+
+    //Update the status div
+    var stat = document.getElementById('status');
+    stat.innerHTML = 'Now adding: ' + modeType;
+}
+
+//Add listeners so the buttons change the modes
+document.getElementById('addNode').addEventListener('click', 
+function(){setMode('nodes')}, false);
+
+document.getElementById('addEdges').addEventListener('click',
+function(){setMode('edges')}, false);
+
+canvas.addEventListener('click', canvasClick, false);
