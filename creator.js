@@ -222,11 +222,30 @@ function drawEdge(node1, node2, type){
             y = midPoint(node1.yPos, node2.yPos);
         
         var radiusX = pointDistance(node1.xPos, node1.yPos, node2.xPos, node2.yPos) / 2 ;
-        //We want the y radius to be a multiple of the type and thinner than y for small types
-        var radiusY = radiusX/4 * type;
+        //We want the y radius to be a multiple of the type/2 and thinner than y for small types
+        var radiusY = radiusX/4 * Math.ceil(type/2);
         
-        //We want to draw the first ellipse above and the second below
-        var rotation = Math.PI - Math.asin(Math.abs(node2.yPos - node1.yPos)/(radiusX * 2));
+        var theta = Math.asin(Math.abs(node2.yPos - node1.yPos)/(radiusX * 2));       
+        //We must decide if we are in quadrant 2 or quadrant 4
+        var quadSign = (node1.xPos - node2.xPos) * (node1.yPos - node2.yPos);
+
+        if(quadSign <= 0){
+            //We want to draw the first ellipse above (odd type) and the second below (even type)
+            if(type % 2 === 1){
+                var rotation = Math.PI - theta;
+            }
+            else{
+                var rotation = -theta;
+            }
+        }
+        else{ 
+            if(type % 2 === 1){
+                var rotation =  theta;
+            }
+            else{
+                var rotation = -(Math.PI - theta);
+            }
+        }
 
         ctx.ellipse(x, y, radiusX, radiusY, rotation, 0, Math.PI);
     }
