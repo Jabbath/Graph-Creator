@@ -7,15 +7,19 @@
     <body style="margin: 0px">
     <canvas id = "cytoBkg"></canvas>
 
-    <div id = "controlButtons">
+    <div align = "left" id = "controlButtons">
         <button id = "addNode">Add Nodes </button>
         <button id = "removeNode">Remove Nodes </button>
         <button id = "addEdges">Add Edges </button>
-        <button id = "removeEdges">Remove Edges </button>
-    </div>
+        <button id = "removeEdges">Remove Edges </button> <br>
+        <p id = "status">Now adding nodes</p> <br>
 
-    <p id = "status">Now adding nodes</p>
+        Write Graph: <input type = "file" nwsaveas id = "writeGraph"></input>
+        Write Positions: <input type = "file" nwsaveas id = "writePositions"></input>
+    </div>
+    
     </body>
     
-    <script src = "creator.js"></script>
+    <script src = "src/creator.js"></script>
+    <script src = "src/fileWrite.js"></script>
 </html>

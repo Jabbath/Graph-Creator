@@ -505,7 +505,7 @@ var canvas  = document.getElementById('cytoBkg');
 var ctx = canvas.getContext('2d');
 
 var map = new Image();
-map.src = 'maps/map.jpg';
+map.src = '../maps/map.jpg';
 
 map.onload = function() {
     canvas.width = map.width;
