@@ -325,6 +325,7 @@ function addEdge(xPos, yPos){
         var node1Ind = selected[0],
             node2Ind = selected[1];
         
+        //Get the type of you edge and store the edge data in the nodes
         var edgeType = getEdgeType(node1Ind, node2Ind);
         
         nodes[node1Ind].adjacencies.push({'index': node2Ind, 'weight': 1, 'type': edgeType});
@@ -332,6 +333,52 @@ function addEdge(xPos, yPos){
 
         drawEdge(nodes[node1Ind], nodes[node2Ind], edgeType);
         selected = [];
+    }
+}
+
+function removeEdge(xPos, yPos){
+    /*
+    Checks if the user has clicked inside a vertex and removes the last edge added
+    to that vertex.
+
+    INPUT
+    xPos: The x coordinate of the user click
+    yPos: The y coordinate of the user click
+    */
+
+    //Go through all the nodes and find the first one in which our click lands
+    for(var i = nodes.length - 1; i >= 0; i--){
+        if(nodes[i].inNode(xPos, yPos)){
+            var edges = nodes[i].adjacencies;
+            
+            //Nothing to do if the vertex has no edges
+            if(edges.length === 0){
+                return;
+            }
+
+            //Make a temp copy of the last edge and pop it
+            var lastEdgeInd = edges.length - 1;
+            var lastEdge = edges[lastEdgeInd];
+            nodes[i].adjacencies.pop();
+
+            var partner = lastEdge.index;
+            var partnerEdges = nodes[partner].adjacencies;
+
+            for(var j=0; j<partnerEdges.length;j++){
+                
+                //If the partner node contains the same edge, remove it too
+                if(partnerEdges[j].index === i &&
+                partnerEdges[j].type === lastEdge.type &&
+                partnerEdges[j].weight === lastEdge.weight){
+                    nodes[partner].adjacencies.splice(j, 1);
+                }
+            }
+
+            //Clear the canvas and redraw it
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            reDrawCanvas();
+            return;
+        }
     }
 }
 
@@ -440,6 +487,9 @@ function canvasClick(e){
         case 'adding edges':
             addEdge(xPos, yPos);
             break;
+        case 'removing edges':
+            removeEdge(xPos, yPos);
+            break;
 
         default:
             throw new Error('Invalid input mode!');
@@ -490,5 +540,8 @@ function(){setMode('removing nodes')}, false);
 
 document.getElementById('addEdges').addEventListener('click',
 function(){setMode('adding edges')}, false);
+
+document.getElementById('removeEdges').addEventListener('click',
+function(){setMode('removing edges')}, false);
 
 canvas.addEventListener('click', canvasClick, false);
