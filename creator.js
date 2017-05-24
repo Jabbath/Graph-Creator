@@ -124,18 +124,10 @@ function getEdgeType(node1Ind, node2Ind){
     */
     
     //The maximum number of edges of type n
-    const LIM0 = 1, LIMn = 2;
+    const LIMn = 1;
     
-    //How many type 0 edges there are
-    var count0 = getNumOfType(0, node1Ind, node2Ind);
-    
-    if(count0 < LIM0){
-        return 0;
-    }
-
-    //If our type is not 0 then check types until we find one
     var typeFound = false;
-    var n = 1;
+    var n = 0;
 
     while(!typeFound){
         if(getNumOfType(n, node1Ind, node2Ind) < LIMn){
@@ -262,22 +254,22 @@ function reDrawCanvas(){
         
         for(var j = 0; j < nodes[i].adjacencies.length; j++){
             var indexNode2 = nodes[i].adjacencies[j].index;
+            var edgeType = nodes[i].adjacencies[j].type;
             var edgeDrawn = false;
 
             //Go through our drawn edges array and see if this edge has been drawn
             for(var k = 0; k < drawnEdges.length; k++){
-                if(arrayEqual(drawnEdges[k], [i, indexNode2]) 
-                || arrayEqual(drawnEdges[k],  [indexNode2, i])){
+                if(arrayEqual(drawnEdges[k], [i, indexNode2, edgeType]) 
+                || arrayEqual(drawnEdges[k],  [indexNode2, i, edgeType])){
                     edgeDrawn = true;
                     break;
                 }
             }
 
             if(!edgeDrawn){
-            //If digraphs are implemented this line will have to be more flexible about types
-                console.log(nodes[i].adjacencies[j].type);
+                //If digraphs are implemented this line will have to be more flexible about types
                 drawEdge(nodes[i], nodes[indexNode2], nodes[i].adjacencies[j].type);
-                drawnEdges.push([i,indexNode2]);
+                drawnEdges.push([i,indexNode2, edgeType]);
             }
         }
     }
