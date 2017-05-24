@@ -31,6 +31,41 @@ function arrayEqual(array1, array2){
     return equal;
 }
 
+function midPoint(x1, x2){
+    /*
+    Given numbers x1, and x2, calculates the midpoint between them.
+
+    INPUT
+    x1: A real number
+    x2: A real number
+
+    OUTPUT
+    mid: A real number exactly inbetween x1 and x2
+    */
+    
+    var mid = Math.min(x1, x2) + Math.abs(x2 - x1)/2;
+    return mid;
+}
+
+function pointDistance(xPos1, yPos1, xPos2, yPos2){
+    /*
+    Calculate the distance between points with coordinates (xPos1, yPos1)
+    and (xPos2, yPos2).
+
+    INPUT
+    xPos1: A real number x coordinate for the first point
+    yPos1: A real number y coordinate for the first point 
+    xPos1: A real number x coordinate for the second point
+    yPos1: A real number y coordinate for the second point
+
+    OUTPUT
+    distance: The distance between the points calculated with pythagorean theorem
+    */
+
+    var distance = Math.sqrt(Math.pow(xPos2 - xPos1, 2) + Math.pow(yPos2 - yPos1, 2));
+    return distance;
+}
+
 //*******************************************************************
 //EDGE TYPE DETECTION
 //*******************************************************************
@@ -168,7 +203,7 @@ function drawNode(xPos, yPos, color){
     ctx.stroke();
 }
 
-function drawEdge(node1, node2){
+function drawEdge(node1, node2, type){
     /*
     Takes an input of two node objects and draws an edge between them.
 
@@ -183,8 +218,27 @@ function drawEdge(node1, node2){
     ctx.strokeStyle = 'rgba(0, 0, 255, 0.45)';
     ctx.lineWidth = 3;
 
-    ctx.moveTo(node1.xPos, node1.yPos);
-    ctx.lineTo(node2.xPos, node2.yPos);
+    //A type of 0 is a line edge
+    if(type === 0){
+        ctx.moveTo(node1.xPos, node1.yPos);
+        ctx.lineTo(node2.xPos, node2.yPos);
+    }
+    //A type of n > 0 is a ellipse edge
+    else{
+        //Specify the arguments from https://developer.mozilla.org/en/docs/Web/API/CanvasRenderingContext2D/ellipse
+        var x = midPoint(node1.xPos, node2.xPos),
+            y = midPoint(node1.yPos, node2.yPos);
+        
+        var radiusX = pointDistance(node1.xPos, node1.yPos, node2.xPos, node2.yPos) / 2 ;
+        //We want the y radius to be a multiple of the type and thinner than y for small types
+        var radiusY = radiusX/4 * type;
+        
+        //We want to draw the first ellipse above and the second below
+        var rotation = Math.PI - Math.asin(Math.abs(node2.yPos - node1.yPos)/(radiusX * 2));
+
+        ctx.ellipse(x, y, radiusX, radiusY, rotation, 0, Math.PI);
+    }
+
     ctx.stroke();
 
     //Redraw the nodes as red to show that edge adding has finished
@@ -220,7 +274,9 @@ function reDrawCanvas(){
             }
 
             if(!edgeDrawn){
-                drawEdge(nodes[i], nodes[indexNode2]);
+            //If digraphs are implemented this line will have to be more flexible about types
+                console.log(nodes[i].adjacencies[j].type);
+                drawEdge(nodes[i], nodes[indexNode2], nodes[i].adjacencies[j].type);
                 drawnEdges.push([i,indexNode2]);
             }
         }
@@ -263,7 +319,7 @@ function addEdge(xPos, yPos){
         nodes[node1Ind].adjacencies.push({'index': node2Ind, 'weight': 1, 'type': edgeType});
         nodes[node2Ind].adjacencies.push({'index': node1Ind, 'weight': 1, 'type': edgeType});
 
-        drawEdge(nodes[node1Ind], nodes[node2Ind]);
+        drawEdge(nodes[node1Ind], nodes[node2Ind], edgeType);
         selected = [];
     }
 }
