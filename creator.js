@@ -32,6 +32,88 @@ function arrayEqual(array1, array2){
 }
 
 //*******************************************************************
+//EDGE TYPE DETECTION
+//*******************************************************************
+
+function getNumOfType(type, node1Ind, node2Ind){
+    /*
+    Given an input of two node indices, it calculates the number of edges of 
+    type type between them.
+
+    INPUTS
+    type: The integer value of the edge type we are looking for
+    node1Ind: The index of the first node
+    node2Ind: The index of the second node
+
+    OUTPUTS
+    numType: An integer value indicating the number of edges of the type.
+    For DiGraphs this will be the greatest of the two numbers for each graph.
+    */
+
+    var numType = 0;
+    var numNode1 = 0, numNode2 = 0;
+    var node1Edges = nodes[node1Ind].adjacencies, 
+    node2Edges = nodes[node2Ind].adjacencies;
+
+    //Get the count of edges between node1 and node2 of our type (each direction)
+    for(var i = 0; i < node1Edges.length; i++){
+        if(node1Edges[i].index === node2Ind && node1Edges[i].type === type){
+            numNode1++;
+        }
+    }
+
+    for(var i = 0; i < node2Edges.length; i++){
+        if(node2Edges[i].index === node1Ind && node2Edges[i].type === type){
+            numNode2++;
+        }
+    }
+
+    numType = Math.max(numNode1, numNode2);
+    return numType;
+    
+}
+
+function getEdgeType(node1Ind, node2Ind){
+    /*
+    Given two nodes as input, returns the next edge type that should be drawn.
+    The type is calculated for each node and the least of the two types will be used.
+    Type 0: A line.
+    Type n, n>0: An ellipse of horizontal radius n times greater than the base ellipse.
+
+    INPUTS
+    node1Ind: The first node.
+    node2Ind: The second node.
+
+    OUTPUT
+    edgeType: An integer value for edge type as described above.
+    */
+    
+    //The maximum number of edges of type n
+    const LIM0 = 1, LIMn = 2;
+    
+    //How many type 0 edges there are
+    var count0 = getNumOfType(0, node1Ind, node2Ind);
+    
+    if(count0 < LIM0){
+        return 0;
+    }
+
+    //If our type is not 0 then check types until we find one
+    var typeFound = false;
+    var n = 1;
+
+    while(!typeFound){
+        if(getNumOfType(n, node1Ind, node2Ind) < LIMn){
+            typeFound = true;
+            return n;
+        }
+
+        n++;
+    }
+}
+
+
+//*******************************************************************
 //NODE MANIPULATION
 //*******************************************************************
 var nodes = [];
@@ -130,7 +212,8 @@ function reDrawCanvas(){
 
             //Go through our drawn edges array and see if this edge has been drawn
             for(var k = 0; k < drawnEdges.length; k++){
-                if(arrayEqual(drawnEdges[k], [i, indexNode2]) || arrayEqual(drawnEdges[k],  [indexNode2, i])){
+                if(arrayEqual(drawnEdges[k], [i, indexNode2]) 
+                || arrayEqual(drawnEdges[k],  [indexNode2, i])){
                     edgeDrawn = true;
                     break;
                 }
@@ -174,9 +257,11 @@ function addEdge(xPos, yPos){
 
         var node1Ind = selected[0],
             node2Ind = selected[1];
-
-        nodes[node1Ind].adjacencies.push({'index': node2Ind, 'weight': 1});
-        nodes[node2Ind].adjacencies.push({'index': node1Ind, 'weight': 1});
+        
+        var edgeType = getEdgeType(node1Ind, node2Ind);
+        
+        nodes[node1Ind].adjacencies.push({'index': node2Ind, 'weight': 1, 'type': edgeType});
+        nodes[node2Ind].adjacencies.push({'index': node1Ind, 'weight': 1, 'type': edgeType});
 
         drawEdge(nodes[node1Ind], nodes[node2Ind]);
         selected = [];
