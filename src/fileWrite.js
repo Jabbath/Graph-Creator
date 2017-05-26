@@ -42,18 +42,16 @@ function writeGraph(){
     /*
     Writes a multiline adjlist of the user made graph to the specified filename.
     */
+    
+    dialog.setContext(document);
+    dialog.saveFileDialog(function(fileName){
+        var adjlist = makeAdjlist(nodes);
 
-    var fileName = this.value;
-    var adjlist = makeAdjlist(nodes);
-
-    fs.writeFile(fileName, adjlist, function(err){
-        if(err) throw err;
+        fs.writeFile(fileName, adjlist, function(err){
+            if(err) throw err;
+        });
     });
 }
-
-//Add onclick detection for graph and position writing
-document.getElementById('writeGraph').addEventListener('change',
-writeGraph, false);
 
 //**************************************************************************
 //WRITE POSITIONS
@@ -94,16 +92,15 @@ function writePositions(){
     made graph to the user specified filename.
     */
     
-    var fileName = this.value;
-    var positions = makePositionsString(nodes);
-    
-    fs.writeFile(fileName, positions, function(err){
-        if(err) throw err;
+    dialog.setContext(document);
+    dialog.saveFileDialog(function(fileName){
+        var positions = makePositionsString(nodes);
+
+        fs.writeFile(fileName, positions, function(err){
+            if(err) throw err;
+        });
     });
 }
-
-document.getElementById('writePositions').addEventListener('change',
-writePositions, false);
 
 //****************************************************************************
 //OPEN BACKGROUND IMAGE
