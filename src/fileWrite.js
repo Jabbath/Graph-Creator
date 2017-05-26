@@ -3,7 +3,6 @@ Handles the writing of multiline adjacency lists after the graph is completed.
 Also handles general file IO.
 */
 var fs = require('fs'),
-    pathMod = require('path'),
     dialog = require('nw-dialog');
 //**************************************************************************
 //WRITE GRAPHS
@@ -38,7 +37,7 @@ function makeAdjlist(nodeList){
     return adjlist;
 }
 
-function writeGraph(){
+function writeGraphAdjlist(){
     /*
     Writes a multiline adjlist of the user made graph to the specified filename.
     */
@@ -48,6 +47,65 @@ function writeGraph(){
         var adjlist = makeAdjlist(nodes);
 
         fs.writeFile(fileName, adjlist, function(err){
+            if(err) throw err;
+        });
+    });
+}
+
+function makeMatrix(nodeList){
+    /*
+    Given a list of nodes in a graph, creates an adjacency matrix.
+    Note that the dimensions of the matrix are the first line of the file
+    and are formatted n,n.
+
+    INPUT
+    nodeList: A list of nodes in the user's graph
+
+    OUTPUT
+    matrix: A string with the first line being the dimensions of a matrix,
+    and then a jagged array to represent the matrix.
+    */
+
+    var matrix = nodeList.length.toString() + ',' + nodeList.length.toString()
+    + '\r\n';
+    matrix = matrix + '[';
+
+    for(var i=0; i<nodeList.length; i++){
+        console.log('here');
+        var edges = nodes[i].adjacencies;
+
+        //Define our row and fill it with zeros
+        var matrixRow = new Array(nodeList.length);
+        matrixRow.fill(0);
+        
+        //Increment every index which has an edge by one
+        for(var j=0; j<edges.length; j++){
+            matrixRow[edges[j].index]++;
+        }
+
+        matrix = matrix + '[' + matrixRow.toString() + ']' + ',\r\n';
+    }
+    
+    //Remove the last ',\r\n'
+    matrix = matrix.split(',\r\n');
+    matrix.pop();
+    matrix = matrix.join(',\r\n');
+
+    matrix = matrix + ']';
+
+    return matrix;
+}
+
+function writeGraphMatrix(){
+    /*
+    Writes an adjacency matrix for the usermade graph to the specified filename.
+    */
+
+    dialog.setContext(document);
+    dialog.saveFileDialog(function(fileName){
+        var matrixFile = makeMatrix(nodes);
+
+        fs.writeFile(fileName, matrixFile, function(err){
             if(err) throw err;
         });
     });

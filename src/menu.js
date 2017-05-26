@@ -15,7 +15,12 @@ menu.append(new nw.MenuItem({
 var graphSubmenu = new nw.Menu();
 graphSubmenu.append(new nw.MenuItem({
     label: 'Save as Multiline Adjlist',
-    click: writeGraph
+    click: writeGraphAdjlist
+}));
+
+graphSubmenu.append(new nw.MenuItem({
+    label: 'Save as Adjacency Matrix',
+    click: writeGraphMatrix
 }));
 
 menu.append(new nw.MenuItem({
