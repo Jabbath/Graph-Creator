@@ -27,11 +27,11 @@ function makeAdjlist(nodeList){
         var numEdges = edges.length;
         
         //Add the header
-        adjlist = adjlist + i.toString() + ' ' + numEdges.toString() + '\n';
+        adjlist = adjlist + i.toString() + ' ' + numEdges.toString() + '\r\n';
 
         //Add each edge
         for(var k=0; k<numEdges; k++){
-           adjlist = adjlist + edges[k].index.toString() + '\n';
+           adjlist = adjlist + edges[k].index.toString() + '\r\n';
         }
     }
 
