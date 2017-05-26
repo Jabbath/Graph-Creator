@@ -503,15 +503,7 @@ function canvasClick(e){
 //Get our canvas and draw the map to it
 var canvas  = document.getElementById('cytoBkg');
 var ctx = canvas.getContext('2d');
-
-var map = new Image();
-map.src = '../maps/map.jpg';
-
-map.onload = function() {
-    canvas.width = map.width;
-    canvas.height = map.height;
-    reDrawCanvas();
-}
+var map;
 
 //Set which input mode we will start with
 var mode = 'adding nodes';

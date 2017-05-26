@@ -22,7 +22,7 @@ git clone https://github.com/Jabbath/Graph-Creator
 Then, download the latest version of [NW.js (node-webkit)](https://nwjs.io/), and simply drag and drop the files from the repo into the base directory of NW.js. To run the application, run nw.
 
 ## Usage
-To create a graph from an image, place the image in the maps folder with the name 'map.jpg'. Then, use the toggle buttons to change entry modes (add vertices, remove vertices, ..., etc).
+To create a graph from an image, open it from the menu bar. Then, use the toggle buttons to change entry modes (add vertices, remove vertices, ..., etc).
 
 ## Contribution
 If you have a useful feature to contribute, feel free to make a pull request. Contributions are welcome! For a list of planned features that need implementation, check the issues tab.

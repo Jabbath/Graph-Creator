@@ -1,7 +1,10 @@
 /*
 Handles the writing of multiline adjacency lists after the graph is completed.
+Also handles general file IO.
 */
-var fs = require('fs');
+var fs = require('fs'),
+    pathMod = require('path'),
+    dialog = require('nw-dialog');
 //**************************************************************************
 //WRITE GRAPHS
 //**************************************************************************
@@ -101,3 +104,27 @@ function writePositions(){
 
 document.getElementById('writePositions').addEventListener('change',
 writePositions, false);
+
+//****************************************************************************
+//OPEN BACKGROUND IMAGE
+//****************************************************************************
+function openImage(){
+    /*
+    Activated when the File>Open dialog in the menubar is clicked.
+    Opens a new background image in the canvas.
+    */
+
+    //Make a new file input dialog using a hidden input tag.
+    dialog.setContext(document);
+    dialog.openFileDialog(function(filePath){
+        map = new Image();
+        map.src =  'file://' + filePath;
+        console.log(map.src);
+
+        map.onload = function(){
+            canvas.width = map.width;
+            canvas.height = map.height;
+            reDrawCanvas();
+        }
+    });
+}
