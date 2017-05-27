@@ -4,7 +4,10 @@ Graph creator is a tool designed to help graph theorists input graphs from pre-e
 
 ## Supported Functionality
 #### Multiline Adjacency Lists
-Graph Creator can output a user made graph as a multi-line adjacency list, as used by [NetworkX](https://networkx.github.io/). 
+Graph Creator can output a user made graph as a multi-line adjacency list, as used by [NetworkX](https://networkx.github.io/).
+
+#### Adjacency Matrices
+Graphs entered into graph creator can be output as a adjacency matrix represented by a 2D list. 
 
 #### Vertex Position List
 Graph Creator can output a JSON file with (x, y) coordinates of each user added vertex.
@@ -17,6 +20,13 @@ To install Graph creator first git clone this repo:
 
 ```
 git clone https://github.com/Jabbath/Graph-Creator
+```
+
+Now, cd to the Graph-Creator director and run npm install to install the dependencies:
+
+```
+cd Graph-Creator
+npm install
 ```
 
 Then, download the latest version of [NW.js (node-webkit)](https://nwjs.io/), and simply drag and drop the files from the repo into the base directory of NW.js. To run the application, run nw.
