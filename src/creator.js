@@ -126,6 +126,23 @@ function getEdgeType(node1Ind, node2Ind){
     //The maximum number of edges of type n
     const LIMn = 1;
     
+    //If the edge is a self loop
+    if(node1Ind === node2Ind){
+
+        //Decrement until we find a type with no edges
+        var typeFound = false;
+        var n = -1;
+
+        while(!typeFound){
+            if(getNumOfType(n, node1Ind, node2Ind)< LIMn){
+                return n;
+            }
+
+            n--;
+        }
+    }
+
+    //Increment until we find a type with no edges
     var typeFound = false;
     var n = 0;
 
@@ -214,6 +231,24 @@ function drawEdge(node1, node2, type){
     if(type === 0){
         ctx.moveTo(node1.xPos, node1.yPos);
         ctx.lineTo(node2.xPos, node2.yPos);
+    }
+    //A type less than 0 is a self loop
+    else if(type < 0){
+        var radiusX = 10,
+              radiusY = -15 * Math.floor(type/2);
+
+        var x = node1.xPos;
+
+        //Change whether the self loop is on top or on bottom depending on an even or odd type
+        if(type % 2 === 0){
+            var y = node1.yPos + radiusY;
+        }
+        else{
+            var  y = node1.yPos - radiusY;
+        }
+        
+
+        ctx.ellipse(x, y, radiusX, radiusY, 0, 0, 2*Math.PI);
     }
     //A type of n > 0 is a ellipse edge
     else{
