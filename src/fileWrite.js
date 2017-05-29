@@ -135,8 +135,14 @@ function makePositionsString(nodeList){
         //Scale the coordinates
         var relX = nodeList[i].xPos / map.width,
             relY = nodeList[i].yPos / map.height;
-
-        posJSON = posJSON + '[' + relX.toString() + ', ' + relY.toString() + '], ';
+        
+        //Make sure the last entry doesn't have a comma
+        if(i < nodeList.length - 1){
+            posJSON = posJSON + '[' + relX.toString() + ', ' + relY.toString() + '], ';
+        }
+        else{
+            posJSON = posJSON + '[' + relX.toString() + ', ' + relY.toString() + ']';
+        }
     }
 
     //Add the last bracket
