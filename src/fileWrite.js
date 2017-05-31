@@ -180,12 +180,9 @@ function openImage(){
     dialog.openFileDialog(function(filePath){
         map = new Image();
         map.src =  'file://' + filePath;
-        console.log(map.src);
 
         map.onload = function(){
-            canvas.width = map.width;
-            canvas.height = map.height;
-            reDrawCanvas();
+            renderGraph(map);
         }
     });
 }

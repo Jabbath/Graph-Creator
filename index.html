@@ -3,9 +3,21 @@
     <head>
         <title>Graph Creator</title>
     </head>
+    
+    <style type = "text/css">
+        body {
+            margin: 0px;
+        }
+        #container {
+            width: 1080px;
+            max-width: 1080px;
+            height: 720px;
+        }
 
-    <body style="margin: 0px">
-    <canvas id = "cytoBkg"></canvas>
+    </style>
+
+    <body>
+    <div id = "container"></div>
 
     <div align = "left" id = "controlButtons">
         <button id = "addNode">Add Nodes </button>
@@ -17,6 +29,8 @@
 
     </body>
     
+    <script src = "sigma/sigma.js"></script>
+    <script src = "src/sigmaInit.js"></script>
     <script src = "src/creator.js"></script>
     <script src = "src/fileWrite.js"></script>
     <script src = "src/menu.js"></script>

@@ -234,17 +234,17 @@ function drawEdge(node1, node2, type){
     }
     //A type less than 0 is a self loop
     else if(type < 0){
-        var radiusX = 10,
-              radiusY = -15 * Math.floor(type/2);
+        const radiusX = 10,
+              radiusY = -15 * Math.ceil(type/2);
 
-        var x = node1.xPos;
+        const x = node1.xPos;
 
         //Change whether the self loop is on top or on bottom depending on an even or odd type
-        if(type % 2 === 0){
-            var y = node1.yPos + radiusY;
+        if(type % 2 !== 0){
+            const y = node1.yPos + radiusY/2;i
         }
         else{
-            var  y = node1.yPos - radiusY;
+            const y = node1.yPos - radiusY/2;
         }
         
 
@@ -426,12 +426,36 @@ function addNode(xPos, yPos){
     yPos: The y position of the node
     */
 
-    //When the user clicks on the graph, add a node
-    nodes.push(new node(xPos, yPos));
+    //Choose the first number not yet taken as our id 
+    var existingNodes = s.graph.nodes();
+    
+    var idFound = false,
+        n = -1;
 
-    //Draw a red dot at the position of the new node
-    drawNode(xPos, yPos);
+    while(!idFound){
+        idFound = true;
+        n++;
+        
+        for(var i=0; i<existingNodes.length; i++){
+            //If a node with the same id already exists we move on
+            if(existingNodes[i].id === n.toString()){
+                idFound = false;
+            }
+        }
 
+    }
+
+    //We have to transform the coordinates to adjust for the camera centering
+    s.graph.addNode({
+        id: n.toString(),
+        x: xPos - 540,
+        y: yPos - 360,
+        size: 10,
+        color: '#f00'
+    });
+
+    //Make sigma redraw the graph
+    s.refresh();
 }
 
 function updateAdjacencies(removedIndex){
@@ -505,7 +529,6 @@ function canvasClick(e){
     INPUT
     e: The event object for the onclick event
     */
-
     var xPos = e.pageX,
         yPos = e.pageY;
     
@@ -536,8 +559,6 @@ function canvasClick(e){
 //*****************************************************************
 
 //Get our canvas and draw the map to it
-var canvas  = document.getElementById('cytoBkg');
-var ctx = canvas.getContext('2d');
 var map;
 
 //Set which input mode we will start with
@@ -570,5 +591,3 @@ function(){setMode('adding edges')}, false);
 
 document.getElementById('removeEdges').addEventListener('click',
 function(){setMode('removing edges')}, false);
-
-canvas.addEventListener('click', canvasClick, false);
