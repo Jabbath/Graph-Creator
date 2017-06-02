@@ -79,6 +79,25 @@ function writeGraphAdjlist(){
     });
 }
 
+function getIndexOf(id){
+    /*
+    Given the id of a node, finds it's index in cy.nodes().
+
+    INPUT
+    id: The id of the node in question.
+
+    OUTPUT
+    index: The index of the node in question
+    */
+    var nodes = cy.nodes();
+
+    for(var i=0; i < nodes.length; i++){
+        if(nodes[i].id() === id){
+            return i;
+        }
+    }
+}
+
 function makeMatrix(nodeList){
     /*
     Given a list of nodes in a graph, creates an adjacency matrix.
@@ -98,8 +117,7 @@ function makeMatrix(nodeList){
     matrix = matrix + '[';
 
     for(var i=0; i<nodeList.length; i++){
-        console.log('here');
-        var edges = nodes[i].adjacencies;
+        var edges = nodeList[i].connectedEdges();
 
         //Define our row and fill it with zeros
         var matrixRow = new Array(nodeList.length);
@@ -107,7 +125,12 @@ function makeMatrix(nodeList){
         
         //Increment every index which has an edge by one
         for(var j=0; j<edges.length; j++){
-            matrixRow[edges[j].index]++;
+            if(edges[j].data('target') === nodeList[i].id()){
+                matrixRow[getIndexOf(edges[j].data('source'))]++;
+            }
+            else{
+                matrixRow[getIndexOf(edges[j].data('target'))]++;
+            }
         }
 
         matrix = matrix + '[' + matrixRow.toString() + ']' + ',\r\n';
@@ -130,7 +153,7 @@ function writeGraphMatrix(){
 
     dialog.setContext(document);
     dialog.saveFileDialog(function(fileName){
-        var matrixFile = makeMatrix(nodes);
+        var matrixFile = makeMatrix(cy.nodes());
 
         fs.writeFile(fileName, matrixFile, function(err){
             if(err) throw err;
@@ -157,11 +180,15 @@ function makePositionsString(nodeList){
     var posJSON = '{';
     
     for(var i=0; i<nodeList.length; i++){
-        posJSON = posJSON + '"' + i.toString() + '": ';
-        
+        if(nodeList[i].style('label') !== ''){
+            posJSON = posJSON + '"' + nodeList[i].style('label') + '": ';
+        }
+        else{
+            posJSON = posJSON + '"' + nodeList[i].data('id') + '": ';
+        }
         //Scale the coordinates
-        var relX = nodeList[i].xPos / map.width,
-            relY = nodeList[i].yPos / map.height;
+        var relX = nodeList[i].position().x / map.width,
+            relY = nodeList[i].position().y / map.height;
         
         //Make sure the last entry doesn't have a comma
         if(i < nodeList.length - 1){
@@ -185,7 +212,7 @@ function writePositions(){
     
     dialog.setContext(document);
     dialog.saveFileDialog(function(fileName){
-        var positions = makePositionsString(nodes);
+        var positions = makePositionsString(cy.nodes());
 
         fs.writeFile(fileName, positions, function(err){
             if(err) throw err;
