@@ -16,6 +16,11 @@ function renderGraph(img){
     
     //Set our background image
     $('#container').css('background-image', 'url(' + img.src + ')');    
-    $('#container').click(canvasClick);
+
+    //Bind our event handlers
+    cy.on('tap', 'edge', removeEdge);
+    cy.on('tap', 'node', removeNode);
+    cy.on('tap', addNode);
+    cy.on('tap', 'node', addEdge);
 }
 
