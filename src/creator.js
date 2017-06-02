@@ -66,6 +66,36 @@ function pointDistance(xPos1, yPos1, xPos2, yPos2){
     return distance;
 }
 
+function getFirstIdType(arr){
+    /*
+    Iterates through an array of objects with the numerical property id
+    and find the least number not yet used as an id.
+
+    INPUT
+    arr: an array of objects with the id property
+
+    OUTPUT
+    leastNum: A string of the least number that is not yet an id
+    */
+    var idFound = false,
+        n = -1;
+
+    while(!idFound){
+        idFound = true;
+        n++;
+        
+        for(var i=0; i<arr.length; i++){
+            //If a node with the same id already exists we move on
+            if(arr[i].id === n.toString()){
+                idFound = false;
+            }
+        }
+
+    }
+
+    return n.toString();
+}
+
 //*******************************************************************
 //EDGE TYPE DETECTION
 //*******************************************************************
@@ -89,7 +119,6 @@ function getNumOfType(type, node1Ind, node2Ind){
     var numNode1 = 0, numNode2 = 0;
     var node1Edges = nodes[node1Ind].adjacencies, 
     node2Edges = nodes[node2Ind].adjacencies;
-
     //Get the count of edges between node1 and node2 of our type (each direction)
     for(var i = 0; i < node1Edges.length; i++){
         if(node1Edges[i].index === node2Ind && node1Edges[i].type === type){
@@ -160,25 +189,15 @@ function getEdgeType(node1Ind, node2Ind){
 //*******************************************************************
 //NODE MANIPULATION
 //*******************************************************************
-var nodes = [];
-
-class node {
-/*
-This is a node object. It store the position and edges of a node.
-*/
-    constructor(xCoord, yCoord) {
-        this.xPos = xCoord;
-        this.yPos = yCoord;
-        this.adjacencies = [];
-    }
-
-    //Checks if an (x, y) coordinate is in the drawn node
-    inNode(xPos, yPos){
+function inNode(xPos, yPos, node){
         const MAX_RADIUS = 10;
+        //Get absolute values for the coordinates
+        var nodeX = node.position().x,
+            nodeY = node.position().y;
         
         //Calculate the radius of the click from the circle's center
-        var radius = Math.sqrt(Math.pow(xPos - this.xPos, 2) + 
-        Math.pow(yPos - this.yPos, 2));
+        var radius = Math.sqrt(Math.pow(xPos - nodeX, 2) + 
+        Math.pow(yPos - nodeY, 2));
 
         if(radius <= MAX_RADIUS){
             return true;
@@ -186,30 +205,6 @@ This is a node object. It store the position and edges of a node.
         else{
             return false;
         }
-    }
-}
-
-function drawNode(xPos, yPos, color){
-    /*
-    Given an (x,y) coordinate, it draws a semitransparent circle on the
-    canvas of radius 5 px.
-    
-    INPUT
-    xPos: The x coordinate of the node
-    yPos: The y coordinate of the node
-    color [optional]: An optional hex string specifying the color of the node.
-    Defaults to #FF0000 (red).
-    */
-
-    ctx.beginPath();
-    //Make the node circle red or the user given color and thicken the stroke
-    ctx.strokeStyle = '#FF0000';
-    if(color !== undefined) ctx.strokeStyle = color;
-
-    ctx.lineWidth = 3;
-
-    ctx.arc(xPos, yPos, 10, 0, 2 * Math.PI);
-    ctx.stroke();
 }
 
 function drawEdge(node1, node2, type){
@@ -340,14 +335,14 @@ function addEdge(xPos, yPos){
     xPos: The x coordinate of the user's click when selecting a node
     yPos: The y coordinate of the user's click when selecting a node
     */
-
+    
+    var nodes = cy.nodes();
     //Find which node the user has selected with his click and redraw it
     for(var i = nodes.length - 1; i >= 0; i--){
-        if(nodes[i].inNode(xPos, yPos)){
+        if(inNode(xPos, yPos, nodes[i])){
 
             //Add a new selected node and draw it on the screen in green
-            selected.push(i);
-            drawNode(nodes[i].xPos, nodes[i].yPos, '#66ff99');
+            selected.push(nodes[i]);
             break;
         }
     }
@@ -356,17 +351,14 @@ function addEdge(xPos, yPos){
 
     if(selected.length === 2){
         //Add an edge and draw it
+        cy.add({
+            group: 'edges',
+            data: {
+                source: selected[0].id(),
+                target: selected[1].id()
+            }
+        });
 
-        var node1Ind = selected[0],
-            node2Ind = selected[1];
-        
-        //Get the type of you edge and store the edge data in the nodes
-        var edgeType = getEdgeType(node1Ind, node2Ind);
-        
-        nodes[node1Ind].adjacencies.push({'index': node2Ind, 'weight': 1, 'type': edgeType});
-        nodes[node2Ind].adjacencies.push({'index': node1Ind, 'weight': 1, 'type': edgeType});
-
-        drawEdge(nodes[node1Ind], nodes[node2Ind], edgeType);
         selected = [];
     }
 }
@@ -426,69 +418,12 @@ function addNode(xPos, yPos){
     yPos: The y position of the node
     */
 
-    //Choose the first number not yet taken as our id 
-    var existingNodes = s.graph.nodes();
-    
-    var idFound = false,
-        n = -1;
-
-    while(!idFound){
-        idFound = true;
-        n++;
-        
-        for(var i=0; i<existingNodes.length; i++){
-            //If a node with the same id already exists we move on
-            if(existingNodes[i].id === n.toString()){
-                idFound = false;
-            }
-        }
-
-    }
 
     //We have to transform the coordinates to adjust for the camera centering
-    s.graph.addNode({
-        id: n.toString(),
-        x: xPos - 540,
-        y: yPos - 360,
-        size: 10,
-        color: '#f00'
+    cy.add({
+        group: "nodes",
+        position: {x: xPos, y: yPos}
     });
-
-    //Make sigma redraw the graph
-    s.refresh();
-}
-
-function updateAdjacencies(removedIndex){
-    /*
-    Updates the adjacencies of each node to counteract the removal of a node.
-
-    INPUT
-    removedIndex: The index of the node we are about to remove.
-    */
-
-    //Remove all adjacencies with the node about to be removed
-    for(var i = 0; i < nodes.length; i++){
-        var count = 0;
-
-        while(count < nodes[i].adjacencies.length){
-            //Check if the removed node is adjacent and remove it if it is
-            if(nodes[i].adjacencies[count].index === removedIndex){
-                nodes[i].adjacencies.splice(count, 1);
-                continue;
-            }
-
-            count++;
-        }
-    }
-
-    //Check all other adjacencies and decrement them if they are past the removed index
-    for(var i = 0; i < nodes.length; i++){
-        for(var j = 0; j < nodes[i].adjacencies.length; j++){
-            if(nodes[i].adjacencies[j].index > removedIndex){
-                nodes[i].adjacencies[j].index--;
-            }
-        }
-    }
 }
 
 function removeNode(xPos, yPos){
@@ -500,19 +435,15 @@ function removeNode(xPos, yPos){
     xPos: The x position of the node
     yPos: The y position of the node
     */
+    var nodes = cy.nodes();
 
     //Check each node and check to see the radius at which the click is from it
-    for(var i = nodes.length - 1; i>=0; i--){
+    for(var i=nodes.length - 1; i>=0; i--){
         //If the radius is less than the maximum radius of the circle then
         //our click is in the node
-        if(nodes[i].inNode(xPos, yPos)){
-            
-            //Remove the entry from the node array and clear it's circle
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            updateAdjacencies(i);
-            nodes.splice(i, 1);
-            reDrawCanvas();
-            return;
+        if(inNode(xPos, yPos, nodes[i])){
+            console.log('here');
+            cy.remove(nodes[i]);
         }
     }
 }
