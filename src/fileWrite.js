@@ -21,16 +21,43 @@ function makeAdjlist(nodeList){
     var adjlist = '';
     
     //Go through each vertex and add it's edges to the adjlist
-    for(var i=0; i<nodeList.length; i++){
-        var edges = nodeList[i].adjacencies;
+    for(var i = 0; i < nodeList.length; i++){
+        var edges = nodeList[i].connectedEdges();
         var numEdges = edges.length;
         
-        //Add the header
-        adjlist = adjlist + i.toString() + ' ' + numEdges.toString() + '\r\n';
+        //Check if the user has made a label
+        if(nodeList[i].style('label') !== ''){
+            //Add the header
+            adjlist = adjlist + nodeList[i].style('label') + ' ' + numEdges.toString() + '\r\n';
+        }
+        else{
+            adjlist = adjlist + nodeList[i].data('id') + ' ' + numEdges.toString() + '\r\n';
+        }
 
         //Add each edge
         for(var k=0; k<numEdges; k++){
-           adjlist = adjlist + edges[k].index.toString() + '\r\n';
+
+            //Check if the target is the node itself and use the source instead
+            if(edges[k].data('target') === nodeList[i].data('id')){
+                var targetLabel = cy.getElementById(edges[k].data('source')).style('label');
+
+                if(targetLabel !== ''){
+                    adjlist = adjlist + targetLabel + '\r\n';
+                }
+                else{
+                    adjlist = adjlist + edges[k].data('source') + '\r\n';
+                }
+            }
+            else{
+                var targetLabel = cy.getElementById(edges[k].data('target')).style('label');
+
+                if(targetLabel !== ''){
+                    adjlist = adjlist + targetLabel + '\r\n';
+                }
+                else{
+                    adjlist = adjlist + edges[k].data('target') + '\r\n';
+                }
+            }
         }
     }
 
@@ -44,7 +71,7 @@ function writeGraphAdjlist(){
     
     dialog.setContext(document);
     dialog.saveFileDialog(function(fileName){
-        var adjlist = makeAdjlist(nodes);
+        var adjlist = makeAdjlist(cy.nodes());
 
         fs.writeFile(fileName, adjlist, function(err){
             if(err) throw err;
