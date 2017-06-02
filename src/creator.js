@@ -1,3 +1,45 @@
+var selectedNode,
+    writing = false;
+
+function writeLabel(evt){
+    //Enable writing labels for the node we are hovering over
+    selectedNode = evt.target;
+    writing = true;
+}
+
+function stopWrite(evt){
+    //Disable writing labels after we move off the node
+    writing = false;
+}
+
+
+$(document).on('keyup', function(key){
+    /*
+    Listen for when we press a key and change a node's label if
+    we are hovering over it.
+
+    INPUT
+    key: A jquery keyup event
+    */
+    if(!writing) return;
+
+    //Detect backspace and otherwise input characters
+    if(key.keyCode === 8){
+        //Check if our label is already empty
+        if(selectedNode.style('label').length === 0) return;
+            
+        //Remove the last character
+        selectedNode.style('label', selectedNode.style('label').slice(0, -1));
+    }
+    else if(key.keyCode >= 32 && key.keyCode < 127){
+        selectedNode.style('label',
+        selectedNode.style('label') + String.fromCharCode(key.keyCode).toLowerCase());
+    }
+});
+//************************************************************************
+//BASIC GRAPH MANIPULATION
+//************************************************************************
+
 var selected  = [];
 
 function addEdge(evt){
