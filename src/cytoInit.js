@@ -26,7 +26,9 @@ function renderGraph(img){
                 'border-width': 3,
                 'shape': 'ellipse',
                 'font-size': 20,
-                'label': ''
+                'label': '',
+                'text-outline-color': '#ff0000',
+                'text-outline-width': 2
             }
         }]
 
