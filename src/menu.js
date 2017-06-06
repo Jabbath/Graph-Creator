@@ -3,8 +3,18 @@ var menu = new nw.Menu({type: 'menubar'});
 
 var fileSubmenu = new nw.Menu();
 fileSubmenu.append(new nw.MenuItem({
-    label: 'Open',
+    label: 'Load Background',
     click: openImage
+}));
+
+fileSubmenu.append(new nw.MenuItem({
+    label: 'Load Graph',
+    click: openGraph
+}));
+
+fileSubmenu.append(new nw.MenuItem({
+    label: 'Load Positions',
+    click: openPositions
 }));
 
 menu.append(new nw.MenuItem({

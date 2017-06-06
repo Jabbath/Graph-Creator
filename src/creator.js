@@ -109,8 +109,7 @@ function addEdge(evt){
             group: 'edges',
             data: {
                 source: selected[0].id(),
-                target: selected[1].id(),
-                weight: 1
+                target: selected[1].id()
             }
         });
 

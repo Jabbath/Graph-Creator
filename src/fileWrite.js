@@ -226,8 +226,8 @@ function makePositionsString(nodeList){
             posJSON = posJSON + '"' + nodeList[i].data('id') + '": ';
         }
         //Scale the coordinates
-        var relX = nodeList[i].position().x / map.width,
-            relY = nodeList[i].position().y / map.height;
+        var relX = nodeList[i].position().x / 1080,
+            relY = nodeList[i].position().y / 720;
         
         //Make sure the last entry doesn't have a comma
         if(i < nodeList.length - 1){
@@ -255,6 +255,150 @@ function writePositions(){
 
         fs.writeFile(fileName, positions, function(err){
             if(err) throw err;
+        });
+    });
+}
+//**************************************************************************
+//OPEN POSITIONS
+//**************************************************************************
+function parsePositions(posData){
+    /*
+    Given a json positions file, reads it and applies the positions to
+    the nodes in the graph.
+
+    INPUT
+    posData: The positions of the nodes in the graph
+    */
+
+    var positions = JSON.parse(posData);
+    
+    //Go through each nodes position and assign it
+    for(key in positions){
+        cy.getElementById(key).position('x', 1080 * positions[key][0]);
+        cy.getElementById(key).position('y', 720 *  positions[key][1]);
+    }
+}
+
+
+function openPositions(){
+    /*
+    Opens a JSON  form positions file and loads it into cytoscape.
+    */
+
+    dialog.setContext(document);
+    
+    //Open a multiline adjlist and add the nodes
+    dialog.openFileDialog(function(filePath){
+        fs.readFile(filePath, function (err, data){ 
+            if(err) throw err;
+            
+            parsePositions(data.toString());
+        });
+    });
+}
+
+//***************************************************************************
+//OPEN GRAPHS
+//***************************************************************************
+
+function parseGraph(graph){
+    /*
+    Given input of a multiline adjlist as a string,
+    parses it and creates the cytoscape graph.
+
+    INPUT
+    graph: A string of a multiline adjlist
+    */
+
+    //Remove any existing graph
+    cy.elements().remove();
+    
+    var lines = graph.split('\r\n');
+    if(lines.length === 0) throw new Error('Could not open graph: no data');
+
+    var currentLine = 0;
+    
+    //Read each of the adjacencies for a source node and add them
+    while(currentLine < lines.length - 1){
+        
+        //Read the first node and add it
+        var sourceNode = lines[currentLine].split(' ')[0];
+        var degree = parseInt(lines[currentLine].split(' ')[1]);
+        
+        //If the source node already exists this will make an error
+        try{   
+            cy.add({
+                group: 'nodes',
+                data: {
+                    id: sourceNode
+                }
+            });
+        }catch(err){}
+
+        currentLine++;
+
+        edges = lines.slice(currentLine, currentLine + degree);
+        
+        //Add each edge if it doesn't exist already
+        for(var i=0; i<edges.length; i++){
+            //Split up the edge destination and properties
+            var sepString = edges[i].split('{');
+            
+            //Get the target node and remove the extra space if there was a bracket
+            if(sepString[0].length === 2){
+                var targetNode = sepString[0].slice(0, -1);
+            }
+            else{
+                var targetNode = sepString[0];
+            }
+
+            
+            var weight = '';
+            //Get the properties properties
+            if(sepString.length === 2){
+                weight = JSON.parse('{' + sepString[1]).weight.toString();
+            }
+            
+            //Add the target node in case it doesn't exist
+            try{    
+                cy.add({
+                    group: 'nodes',
+                    data: {
+                        id: targetNode
+                    }
+                });
+            }catch(err){}
+            
+            //Add the edge
+            cy.add({
+                group: 'edges',
+                data: {
+                    source: sourceNode,
+                    target: targetNode
+                },
+                style: {
+                    label: weight
+                }
+            });
+        }
+
+        currentLine+= degree;
+    }
+}
+
+function openGraph(){
+    /*
+    Opens a multiline adjlist form graph file and loads it into cytoscape.
+    */
+
+    dialog.setContext(document);
+    
+    //Open a multiline adjlist and add the nodes
+    dialog.openFileDialog(function(filePath){
+        fs.readFile(filePath, function (err, data){ 
+            if(err) throw err;
+            
+            parseGraph(data.toString());
         });
     });
 }
