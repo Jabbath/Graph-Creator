@@ -1,3 +1,51 @@
+//********************************************************************
+//Adding Weights and Labels
+//********************************************************************
+var selectedEdge,
+    writingEdge = false;
+
+function writeWeight(evt){
+    //Enable writing weights for edges
+    selectedEdge = evt.target;
+    writingEdge = true;
+}
+
+
+function stopWriteWeight(evt){
+    //Disable writing weights after the user takes his mouse off an edge
+    writingEdge = false;
+}
+
+$(document).on('keypress', function(key){ 
+    /*
+    Listen for when we press a key and change a edge's weight if
+    we are hovering over it.
+
+    INPUT
+    key: A jquery keyup event
+    */
+    
+    if(!writingEdge) return;
+
+    //Enter only numbers
+    if(key.keyCode >= 48 && key.keyCode <= 57){
+        selectedEdge.style('label',
+        selectedEdge.style('label') + String.fromCharCode(key.keyCode).toLowerCase());
+    }
+});
+
+$(document).on('keyup', function(key){
+    if(!writingEdge) return;
+
+    if(key.keyCode === 8){
+        //Check if our weight is empty
+        if(selectedEdge.style('label').length === 0) return;
+            
+        //Remove the last character
+        selectedEdge.style('label', selectedEdge.style('label').slice(0, -1));
+    }
+});
+
 var selectedNode,
     writing = false;
 
@@ -61,7 +109,8 @@ function addEdge(evt){
             group: 'edges',
             data: {
                 source: selected[0].id(),
-                target: selected[1].id()
+                target: selected[1].id(),
+                weight: 1
             }
         });
 

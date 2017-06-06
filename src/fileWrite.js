@@ -7,6 +7,27 @@ var fs = require('fs'),
 //**************************************************************************
 //WRITE GRAPHS
 //**************************************************************************
+function checkWeighted(){
+    /*
+    Goes through each edge in the graph and checks if weight is defined.
+
+    OUTPUT
+    weighted: Boolean value for whether any edges are weighted
+    */
+
+    var edges = cy.edges(),
+        weighted = false;
+    
+    //Check each edge for a weight
+    for(var i=0; i<edges.length; i++){
+        if(edges[i].style('label') !== ''){
+            weighted = true;
+        }
+    }
+
+    return weighted;
+}
+
 function makeAdjlist(nodeList){
     /*
     Writes a multiline adjacency list from a list of nodes, as used by networkX.
@@ -17,7 +38,7 @@ function makeAdjlist(nodeList){
     OUTPUT
     adjlist: A string of the multiline adjacency list
     */
-
+    var weighted = checkWeighted();
     var adjlist = '';
     
     //Go through each vertex and add it's edges to the adjlist
@@ -37,27 +58,44 @@ function makeAdjlist(nodeList){
         //Add each edge
         for(var k=0; k<numEdges; k++){
 
+
             //Check if the target is the node itself and use the source instead
             if(edges[k].data('target') === nodeList[i].data('id')){
                 var targetLabel = cy.getElementById(edges[k].data('source')).style('label');
 
                 if(targetLabel !== ''){
-                    adjlist = adjlist + targetLabel + '\r\n';
+                    adjlist = adjlist + targetLabel;
                 }
                 else{
-                    adjlist = adjlist + edges[k].data('source') + '\r\n';
+                    adjlist = adjlist + edges[k].data('source');
                 }
             }
             else{
                 var targetLabel = cy.getElementById(edges[k].data('target')).style('label');
 
                 if(targetLabel !== ''){
-                    adjlist = adjlist + targetLabel + '\r\n';
+                    adjlist = adjlist + targetLabel;
                 }
                 else{
-                    adjlist = adjlist + edges[k].data('target') + '\r\n';
+                    adjlist = adjlist + edges[k].data('target');
                 }
             }
+
+            //If we are weighted get a weight and write it
+            if(weighted){
+                var label = edges[k].style('label');
+
+                if(label !== ''){
+                    weight = label;
+                }
+                else{
+                    weight = '1';
+                }
+
+                adjlist = adjlist + " {'weight': " + weight + '}';
+            }
+
+            adjlist = adjlist + '\r\n';
         }
     }
 
@@ -111,7 +149,8 @@ function makeMatrix(nodeList){
     matrix: A string with the first line being the dimensions of a matrix,
     and then a jagged array to represent the matrix.
     */
-
+    
+    //Check if the user has specified any weights in the graph
     var matrix = nodeList.length.toString() + ',' + nodeList.length.toString()
     + '\r\n';
     matrix = matrix + '[';

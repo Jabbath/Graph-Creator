@@ -12,7 +12,8 @@ function renderGraph(img){
                 'line-color': '#3399ff',
                 'opacity': 0.7,
                 'curve-style': 'bezier',
-                'control-point-step-size': '50px'
+                'control-point-step-size': '50px',
+                'label': ''
             }
         },
         {
@@ -45,5 +46,8 @@ function renderGraph(img){
 
     cy.on('mouseover', 'node', writeLabel);
     cy.on('mouseout', 'node', stopWrite);
+
+    cy.on('mouseover', 'edge', writeWeight);
+    cy.on('mouseout', 'edge', stopWriteWeight);
 }
 
