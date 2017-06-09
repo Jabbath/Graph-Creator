@@ -422,6 +422,9 @@ function parseGraph(graph){
                 group: 'nodes',
                 data: {
                     id: sourceNode
+                },
+                style: {
+                    label: sourceNode
                 }
             });
         }catch(err){}
@@ -456,6 +459,9 @@ function parseGraph(graph){
                     group: 'nodes',
                     data: {
                         id: targetNode
+                    },
+                    style: {
+                        label: sourceNode
                     }
                 });
             }catch(err){}
