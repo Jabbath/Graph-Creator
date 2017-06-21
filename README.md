@@ -13,16 +13,19 @@ Graphs entered into graph creator can be output as a adjacency matrix represente
 Graph Creator can output a JSON file with (x, y) coordinates of each user added vertex.
 
 ## Graph Input Options
-Graph Creator allows point and click vertex addition and edge addition. Currently, visualization of multiple edges between two vertices is supported. Self loops can be added, however visualization has not been implemented yet. In addition, point and click vertex removal is supported. Removing edges from a vertex in the reverse order in which they were added is supported (undo).
+Graph Creator allows point and click vertex addition and edge addition. Labels can be added to vertices by hovering the mouse over them and typing. Weights can be added to edges in the same fashion. Both parallel edges, and self loops are supported. In addition, point and click vertex removal is supported.
 
-## Installation
+## Binaries
+See releases for the latest binaries.
+
+## Installation From Source
 To install Graph creator first git clone this repo:
 
 ```
 git clone https://github.com/Jabbath/Graph-Creator
 ```
 
-Now, cd to the Graph-Creator director and run npm install to install the dependencies:
+Now, cd to the Graph-Creator directory and run npm install to install the dependencies:
 
 ```
 cd Graph-Creator

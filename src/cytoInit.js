@@ -13,7 +13,9 @@ function renderGraph(img){
                 'opacity': 0.7,
                 'curve-style': 'bezier',
                 'control-point-step-size': '50px',
-                'label': ''
+                'label': '',
+                'text-outline-width': 2,
+                'text-outline-color': '#ff0000'
             }
         },
         {

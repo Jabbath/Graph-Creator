@@ -363,7 +363,7 @@ function enumEdges(){
                 edgeCount[target][source].ids.push(id);
             }
             else{
-                edgeCount[source][target] = {count: 1, ids: id};
+                edgeCount[source][target] = {count: 1, ids: [id]};
             }
         }
     }
@@ -439,7 +439,7 @@ function parseGraph(graph){
             var sepString = edges[i].split('{');
             
             //Get the target node and remove the extra space if there was a bracket
-            if(sepString[0].length === 2){
+            if(sepString.length === 2){
                 var targetNode = sepString[0].slice(0, -1);
             }
             else{
@@ -461,7 +461,7 @@ function parseGraph(graph){
                         id: targetNode
                     },
                     style: {
-                        label: sourceNode
+                        label: targetNode
                     }
                 });
             }catch(err){}
