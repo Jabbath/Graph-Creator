@@ -37,8 +37,10 @@ function renderGraph(img){
 
     });
     
-    //Set our background image
-    $('#container').css('background-image', 'url(' + img.src + ')');    
+    //Set our background image if it's provided
+    if(img != null){
+        $('#container').css('background-image', 'url(' + img.src + ')');    
+    }
 
     //Bind our event handlers
     cy.on('tap', 'edge', removeEdge);

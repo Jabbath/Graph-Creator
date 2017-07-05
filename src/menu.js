@@ -2,6 +2,12 @@
 var menu = new nw.Menu({type: 'menubar'});
 
 var fileSubmenu = new nw.Menu();
+
+fileSubmenu.append(new nw.MenuItem({
+    label: 'New',
+    click: renderGraph
+}));
+
 fileSubmenu.append(new nw.MenuItem({
     label: 'Load Background',
     click: openImage
