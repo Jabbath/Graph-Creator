@@ -275,7 +275,9 @@ function parsePositions(posData){
     //Go through each nodes position and assign it
     for(key in positions){
         cy.getElementById(key).position('x', 1080 * positions[key][0]);
-        cy.getElementById(key).position('y', 720 *  positions[key][1]);
+
+        //We have to adjust the y positions as they're inverted when we write them
+        cy.getElementById(key).position('y', 720 *  (positions[key][1] - 1) * -1);
     }
 }
 
