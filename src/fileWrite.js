@@ -225,9 +225,9 @@ function makePositionsString(nodeList){
         else{
             posJSON = posJSON + '"' + nodeList[i].data('id') + '": ';
         }
-        //Scale the coordinates
+        //Scale the coordinates (The y axis should be 0 - 1 from the bottom hence the 1 -)
         var relX = nodeList[i].position().x / 1080,
-            relY = nodeList[i].position().y / 720;
+            relY = 1 - nodeList[i].position().y / 720;
         
         //Make sure the last entry doesn't have a comma
         if(i < nodeList.length - 1){
