@@ -292,98 +292,6 @@ function openPositions(){
 //***************************************************************************
 //OPEN GRAPHS
 //***************************************************************************
-function enumEdges(){
-    /*
-    Goes through and enumerates the number the number undirected edges between
-    each pairs of vertices that have edges between them.
-
-    OUTPUT
-    edgeCount: An object of the form {source: {target: {count: 1, ids: [edgeIdHere]}}}
-    */
-    var edges = cy.edges();
-    var edgeCount = {};
-
-    //Enumerate each type of edge
-    for(var i=0; i<edges.length; i++){
-        var source = edges[i].data('source'),
-            target = edges[i].data('target'),
-            id = edges[i].data('id');
-
-        //Check if our edgeCount dict has an entry for the source or target
-        var sourceEntry = source in edgeCount,
-            targetEntry = target in edgeCount;
-
-        //If neither entries exist make one
-        if(!sourceEntry && !targetEntry){
-            edgeCount[source] = {};
-            edgeCount[source][target] = {count: 1, ids: [id]};
-        }
-        //Otherwise use the existing one already
-        else if(sourceEntry && !targetEntry){
-            //Check if our target is in the sourceEntry
-            var targetInner = target in edgeCount[source];
-
-            if(!targetInner){
-                edgeCount[source][target] = {count: 0, ids: []};
-            }
-
-            edgeCount[source][target].count++;
-            edgeCount[source][target].ids.push(id);
-        }
-        else if(targetEntry && !sourceEntry){ 
-            //Check if our source is in the targetEntry
-            var sourceInner = source in edgeCount[target];
-
-            if(!sourceInner){
-                edgeCount[target][source] = {count: 0, ids: []};
-            }
-
-            edgeCount[target][source].count++;
-            edgeCount[target][source].ids.push(id);
-        }
-        else if(targetEntry && sourceEntry){
-            //Check if one already has a entry
-            var targetInner = target in edgeCount[source],
-                sourceInner = source in edgeCount[target];
-
-            if(targetInner){
-                edgeCount[source][target].count++;
-                edgeCount[source][target].ids.push(id);
-            }
-            else if(sourceInner){
-                edgeCount[target][source].count++;
-                edgeCount[target][source].ids.push(id);
-            }
-            else{
-                edgeCount[source][target] = {count: 1, ids: [id]};
-            }
-        }
-    }
-
-    return edgeCount;
-}
-
-function removeDuplicateEdges(){
-    /*
-    Counts the number of undirected edges of each type and removes half of them.
-    */
-
-    var edgeCount = enumEdges();
-
-    //When the number of a type of edge is divisible by two, we have duplicates
-    for(var source in edgeCount){
-        for(var target in edgeCount[source]){
-
-            //Check for duplicates and remove
-            if(edgeCount[source][target].count % 2 === 0){
-                for(var i=0; i<edgeCount[source][target].ids.length/2; i++){
-                    cy.remove(cy.$id(edgeCount[source][target].ids[i]))
-                }
-            }
-        }
-    }
-}
-
 function parseGraph(graph){
     /*
     Given input of a multiline adjlist as a string,
@@ -472,10 +380,7 @@ function parseGraph(graph){
         }
 
         currentLine+= degree;
-    }
-    
-    //The way in which we add adds each edge twice
-    removeDuplicateEdges();
+    }    
 }
 
 function openGraph(){
