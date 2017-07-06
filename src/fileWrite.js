@@ -43,7 +43,9 @@ function makeAdjlist(nodeList){
     
     //Go through each vertex and add it's edges to the adjlist
     for(var i = 0; i < nodeList.length; i++){
-        var edges = nodeList[i].connectedEdges();
+
+        //Get all the edges that have a target from our current node
+        var edges = nodeList[i].edgesTo(nodeList);
         var numEdges = edges.length;
         
         //Check if the user has made a label
@@ -59,27 +61,15 @@ function makeAdjlist(nodeList){
         for(var k=0; k<numEdges; k++){
 
 
-            //Check if the target is the node itself and use the source instead
-            if(edges[k].data('target') === nodeList[i].data('id')){
-                var targetLabel = cy.getElementById(edges[k].data('source')).style('label');
+            var targetLabel = cy.getElementById(edges[k].data('target')).style('label');
 
-                if(targetLabel !== ''){
-                    adjlist = adjlist + targetLabel;
-                }
-                else{
-                    adjlist = adjlist + edges[k].data('source');
-                }
+            if(targetLabel !== ''){
+                adjlist = adjlist + targetLabel;
             }
             else{
-                var targetLabel = cy.getElementById(edges[k].data('target')).style('label');
-
-                if(targetLabel !== ''){
-                    adjlist = adjlist + targetLabel;
-                }
-                else{
-                    adjlist = adjlist + edges[k].data('target');
-                }
+                adjlist = adjlist + edges[k].data('target');
             }
+            
 
             //If we are weighted get a weight and write it
             if(weighted){

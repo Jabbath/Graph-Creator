@@ -1,6 +1,6 @@
 {
     "name": "graph-creator",
-    "version": "0.8.3",
+    "version": "0.9.0",
     "main": "index.html",
     "window": {
         "height": 1024,
