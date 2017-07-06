@@ -92,7 +92,7 @@ function makeAdjlist(nodeList){
                     weight = '1';
                 }
 
-                adjlist = adjlist + " {'weight': " + weight + '}';
+                adjlist = adjlist + ' {"weight": ' + weight + '}';
             }
 
             adjlist = adjlist + '\r\n';
