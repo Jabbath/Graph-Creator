@@ -41,6 +41,9 @@ function renderGraph(img){
     if(img != null){
         $('#container').css('background-image', 'url(' + img.src + ')');    
     }
+    else{
+        $('#container').css('background-image', 'none');    
+    }
 
     //Bind our event handlers
     cy.on('tap', 'edge', removeEdge);
