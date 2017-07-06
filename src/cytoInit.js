@@ -55,5 +55,3 @@ function renderGraph(img){
     cy.on('mouseout', 'edge', stopWriteWeight);
 }
 
-renderGraph();
-
