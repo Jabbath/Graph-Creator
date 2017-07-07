@@ -179,6 +179,7 @@ function setMode(modeType){
     stat.innerHTML = 'Now ' + modeType;
 }
 
+//TODO: Convert to jquery code
 //Add listeners so the buttons change the modes
 document.getElementById('addNode').addEventListener('click', 
 function(){setMode('adding nodes')}, false);
@@ -191,3 +192,23 @@ function(){setMode('adding edges')}, false);
 
 document.getElementById('removeEdges').addEventListener('click',
 function(){setMode('removing edges')}, false);
+
+//Add our event listeners to change between digraph mode and normal mode
+$('#digraphStatus').click(function(){
+    /*
+    Changes whether digraph arrows are enabled
+    when the checkbox is clicked. Note that this
+    is a reference to the checkbox id.
+    */
+
+    //If we are checked enable digraph arrows
+    if($(this).is(':checked')){
+        cy.style().selector('edge').style('target-arrow-shape', 'triangle')
+        .update();
+    }
+    //If we are not checked remove any possible arrows
+    else{
+        cy.style().selector('edge').style('target-arrow-shape','none' )
+        .update();
+    }
+});
