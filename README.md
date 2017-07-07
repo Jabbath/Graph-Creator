@@ -13,7 +13,10 @@ Graphs entered into graph creator can be output as a adjacency matrix represente
 Graph Creator can output a JSON file with (x, y) coordinates of each user added vertex.
 
 ## Graph Input Options
-Graph Creator allows point and click vertex addition and edge addition. Labels can be added to vertices by hovering the mouse over them and typing. Weights can be added to edges in the same fashion. Both parallel edges, and self loops are supported. In addition, point and click vertex removal is supported.
+Graph Creator allows point and click vertex addition and edge addition. Labels can be added to vertices by hovering the mouse over them and typing. Weights can be added to edges in the same fashion. Both parallel edges, self loops, and digraphs are supported. In addition, point and click vertex removal is supported.
+
+## Usage
+To create a graph from an image, open the image as a background from the menu bar, or start a new graph. Then, use the toggle buttons to change entry modes (add vertices, remove vertices, ..., etc), and create your graph . Existing graphs can also be opened and overlayed. ctrl + mousewheel can be used to zoom in and out as your work on the graph.
 
 ## Binaries
 See releases for the latest binaries.
@@ -33,9 +36,6 @@ npm install
 ```
 
 Then, download the latest version of [NW.js (node-webkit)](https://nwjs.io/), and simply drag and drop the files from the repo into the base directory of NW.js. To run the application, run nw.
-
-## Usage
-To create a graph from an image, open it from the menu bar. Then, use the toggle buttons to change entry modes (add vertices, remove vertices, ..., etc).
 
 ## Contribution
 If you have a useful feature to contribute, feel free to make a pull request. Contributions are welcome! For a list of planned features that need implementation, check the issues tab.
