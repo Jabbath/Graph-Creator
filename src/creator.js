@@ -22,7 +22,7 @@ $(document).on('keypress', function(key){
     we are hovering over it.
 
     INPUT
-    key: A jquery keyup event
+    key: A jquery keypress event
     */
     
     if(!writingEdge) return;
@@ -35,6 +35,14 @@ $(document).on('keypress', function(key){
 });
 
 $(document).on('keyup', function(key){
+    /*
+    Listen for backspace and remove characters if we are riding.
+    keypress does not capture backspace.
+
+    INPUT
+    key: A jquery keyup event
+    */
+
     if(!writingEdge) return;
 
     if(key.keyCode === 8){
@@ -61,10 +69,23 @@ function stopWrite(evt){
 }
 
 
-$(document).on('keyup', function(key){
+$(document).on('keypress', function(key){
     /*
     Listen for when we press a key and change a node's label if
     we are hovering over it.
+
+    INPUT
+    key: A jquery keyup event
+    */
+    if(!writing) return;
+
+    selectedNode.style('label',
+    selectedNode.style('label') + String.fromCharCode(key.keyCode).toLowerCase()); 
+});
+
+$(document).on('keyup', function(key){
+    /*
+    Listen for backspace when we are writing labels.
 
     INPUT
     key: A jquery keyup event
@@ -78,10 +99,6 @@ $(document).on('keyup', function(key){
             
         //Remove the last character
         selectedNode.style('label', selectedNode.style('label').slice(0, -1));
-    }
-    else if(key.keyCode >= 32 && key.keyCode < 127){
-        selectedNode.style('label',
-        selectedNode.style('label') + String.fromCharCode(key.keyCode).toLowerCase());
     }
 });
 //************************************************************************
