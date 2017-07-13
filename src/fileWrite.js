@@ -304,7 +304,7 @@ function parseGraph(graph){
     //Remove any existing graph
     cy.elements().remove();
     
-    var lines = graph.split('\n');
+    var lines = graph.split('\r\n');
     if(lines.length === 0) throw new Error('Could not open graph: no data');
 
     var currentLine = 0;
